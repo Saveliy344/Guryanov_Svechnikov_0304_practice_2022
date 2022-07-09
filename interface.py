@@ -2,8 +2,6 @@ from tkinter import Tk, Label, Button, Entry, messagebox
 
 from algorithm import algorithm
 
-GLOBAL_DATA = {}
-
 
 def find_global_minimum():
     data = {}
