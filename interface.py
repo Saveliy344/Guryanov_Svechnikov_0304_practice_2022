@@ -1,45 +1,84 @@
-from tkinter import Tk, Label, Button, Entry, messagebox
+from tkinter import Tk, Label, Button, Entry, messagebox, filedialog
+import os
 
 from algorithm import algorithm
 
+using_file = True
+file = None
+file_data = []
+
+
+def openFile():
+    global using_file
+    global file_data
+    try:
+        file = open(filedialog.askopenfile(initialdir=os.path.abspath(__file__), title='Выберите файл', ).name, 'r')
+    except AttributeError:
+        messagebox.showinfo("Ошибка", "Не удалось открыть файл!")
+    if file:
+        using_file = True
+        file_data = file.read().split()
+        file.close()
+
+
+def use_gui():
+    global using_file
+    global file_data
+    file_data = []
+    using_file = False
+
 
 def find_global_minimum():
+    global using_file
+    global file_data
     data = {}
-    try:
-        first_coeffs = list(map(float, (Ent_0.get(), Ent_1.get(), Ent_2.get(), Ent_3.get(), Ent_4.get(), Ent_5.get(),
-                                        Ent_6.get(), Ent_7.get(), Ent_8.get(), Ent_9.get())))
-    except ValueError:
-        messagebox.showinfo("Ошибка ввода коэффициентов", "Все коэффициенты должны быть числами.")
-        return
-    try:
-        interval = (int(Ent_10a.get()), int(Ent_10b.get()))
-    except ValueError:
-        messagebox.showinfo("Ошибка ввода интервала", "Неверно введён интервал.")
-        return
-    try:
-        accuracy = float(Ent_13.get())
-    except ValueError:
-        messagebox.showinfo("Ошибка ввода точности", "Точность должна быть числом.")
-        return
-    try:
-        p_mutation = float(Ent_11.get())
-    except ValueError:
-        messagebox.showinfo("Ошибка ввода вероятности мутации", "Вероятность мутации должна быть числом.")
-        return
-    try:
-        population = float(Ent_12.get())
-    except ValueError:
-        messagebox.showinfo("Ошибка ввода густоты популяции", "Густота популяции должна быть числом.")
-        return
-    if accuracy < 0 or accuracy > 1:
-        messagebox.showinfo("Ошибка точности", "Точность должна принимать значение от 0 до 1.")
-        return
-    if interval[0] >= interval[1]:
-        messagebox.showinfo("Неправильный интервал", "Левое значение интервала должно быть меньше правого.")
-        return
-    if population < 0 or population > 1:
-        messagebox.showinfo("Ошибка гусоты популяции", "Гусотота популяции должна принимать значение от 0 до 1.")
-        return
+    if not using_file:
+        try:
+            first_coeffs = list(
+                map(float, (Ent_0.get(), Ent_1.get(), Ent_2.get(), Ent_3.get(), Ent_4.get(), Ent_5.get(),
+                            Ent_6.get(), Ent_7.get(), Ent_8.get(), Ent_9.get())))
+        except ValueError:
+            messagebox.showinfo("Ошибка ввода коэффициентов", "Все коэффициенты должны быть числами.")
+            return
+        try:
+            interval = (int(Ent_10a.get()), int(Ent_10b.get()))
+        except ValueError:
+            messagebox.showinfo("Ошибка ввода интервала", "Неверно введён интервал.")
+            return
+        try:
+            accuracy = float(Ent_13.get())
+        except ValueError:
+            messagebox.showinfo("Ошибка ввода точности", "Точность должна быть числом.")
+            return
+        try:
+            p_mutation = float(Ent_11.get())
+        except ValueError:
+            messagebox.showinfo("Ошибка ввода вероятности мутации", "Вероятность мутации должна быть числом.")
+            return
+        try:
+            population = float(Ent_12.get())
+        except ValueError:
+            messagebox.showinfo("Ошибка ввода густоты популяции", "Густота популяции должна быть числом.")
+            return
+        if accuracy < 0 or accuracy > 1:
+            messagebox.showinfo("Ошибка точности", "Точность должна принимать значение от 0 до 1.")
+            return
+        if interval[0] >= interval[1]:
+            messagebox.showinfo("Неправильный интервал", "Левое значение интервала должно быть меньше правого.")
+            return
+        if population < 0 or population > 1:
+            messagebox.showinfo("Ошибка гусоты популяции", "Гусотота популяции должна принимать значение от 0 до 1.")
+            return
+    else:
+        try:
+            first_coeffs = list(map(float, file_data[0:10]))
+            interval = (int(file_data[10]), int(file_data[11]))
+            p_mutation = float(file_data[12])
+            population = float(file_data[13])
+            accuracy = float(file_data[14])
+        except:
+            messagebox.showinfo("Ошибка выбора файла", "В выбранном файле данные не соответствуют шаблону!")
+            return
     data["first_coeffs"] = first_coeffs
     data["interval"] = interval
     data["accuracy"] = accuracy
@@ -66,8 +105,8 @@ lbl_10b = Label(window, text="-", font=("Arial Bold", 25))
 lbl_11 = Label(window, text="Вероятность Мутации", font=("Arial Bold", 25))
 lbl_12 = Label(window, text="Густота популяции", font=("Arial Bold", 25))
 lbl_13 = Label(window, text="Точность нахождения минимума", font=("Arial Bold", 25))
-btn_1 = Button(window, text="Через Файл", font=("Arial", 20), width=20, height=1)
-btn_2 = Button(window, text="Через Графический Интерфейс", font=("Arial", 20), width=30, height=1)
+btn_1 = Button(window, text="Через Файл", font=("Arial", 20), width=20, height=1, command=openFile)
+btn_2 = Button(window, text="Через Графический Интерфейс", font=("Arial", 20), width=30, height=1, command=use_gui)
 btn_3 = Button(window, text="Найти Глобальный Минимум", font=("Arial Bold", 20), width=30, height=1,
                command=find_global_minimum)
 Ent_0 = Entry(window)
