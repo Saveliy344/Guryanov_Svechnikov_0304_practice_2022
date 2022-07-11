@@ -46,7 +46,7 @@ def mutate(sequence, credibility):
 
 
 def algorithm(accuracy, first_coeffs, interval, population, p_mutation):
-    interval = (math.ceil(interval[0] / accuracy), math.floor(interval[1]) / accuracy)
+    interval = (((math.ceil(interval[0])) / accuracy), (math.floor(interval[1])) / accuracy)
     flag = 1
     coeffs = [first_coeffs[i] * accuracy ** i for i in range(len(first_coeffs))]
     if not (interval[0] < 0 and interval[1] > 0):
@@ -55,7 +55,7 @@ def algorithm(accuracy, first_coeffs, interval, population, p_mutation):
                 coeffs = [coeffs[index] * (-1) ** index for index in range(len(coeffs))]
                 interval = (-interval[1], -interval[0])
                 flag = -1
-        generation = list(range(math.floor(interval[0]), math.ceil(interval[1]), int(math.ceil(1 / population))))
+        generation = list(range(math.floor(interval[0]), math.ceil(interval[1] + 1), int(math.ceil(1 / population))))
         stop = 0
         counter = 0
         prog_window = tk.Tk()
@@ -86,7 +86,6 @@ def algorithm(accuracy, first_coeffs, interval, population, p_mutation):
             print(f"Поколение: {generation}")
             descendants = make_descendants(generation)
             print(f"Потомки: {descendants}")
-            print(descendants.count(1))
             mutate(descendants, p_mutation)
             sequence = generation + descendants
             print(f"Последовательность родителей и потомков: {sequence}")
@@ -98,12 +97,16 @@ def algorithm(accuracy, first_coeffs, interval, population, p_mutation):
                 suitabilities.append(find_suitability(element, coeffs))
             suitabilities.sort(key=lambda x: x)
             suitabilities = suitabilities[:len(suitabilities) // 3 + len(suitabilities) % 3:]
+            save_generation = generation
             generation = []
             for element in sequence:
                 result = find_suitability(element, coeffs)
                 if result in suitabilities:
-                    generation.append(element)
+                    if element >= interval[0] and element <= interval[1]:
+                        generation.append(element)
                     suitabilities.remove(result)
+            if generation == []:
+                generation = save_generation
             c = dict()
             for element in sequence:
                 c[str(element)] = c.get(str(element), 0) + 1
@@ -115,11 +118,11 @@ def algorithm(accuracy, first_coeffs, interval, population, p_mutation):
                 stop = 1
                 # финальный результат
                 final_result = result
-                print(f"Наиболее вероятный минимум: {find_suitability(float(flag * final_result), coeffs)} в точке "
-                      f"{float(final_result) * accuracy}.")
+                print(f"Наиболее вероятный минимум: {find_suitability(float(final_result), coeffs)} в точке "
+                      f"{flag * float(final_result) * accuracy}.")
                 lbl2 = tk.Label(prog_window, text=f"Наиболее вероятный минимум: "
                                                   f"{find_suitability(float(final_result), coeffs)} в точке "
-                                                  f"{float(flag * final_result) * accuracy}.",
+                                                  f"{flag * float(final_result) * accuracy}.",
                                 font=("Arial Bold", 30), bg='white')
                 lbl2.pack()
                 prog_window.mainloop()
@@ -128,7 +131,7 @@ def algorithm(accuracy, first_coeffs, interval, population, p_mutation):
         save_interval = interval
         coeffs = [coeffs[index] / (-1) ** index for index in range(len(coeffs))]
         interval = (0, -interval[0])
-        generation = list(range(math.floor(interval[0]), math.ceil(interval[1]), int(math.ceil(1 / population))))
+        generation = list(range(math.floor(interval[0]), math.ceil(interval[1] + 1), int(math.ceil(1 / population))))
         stop = 0
         counter = 0
         prog_window = tk.Tk()
@@ -159,7 +162,6 @@ def algorithm(accuracy, first_coeffs, interval, population, p_mutation):
             print(f"Поколение: {generation}")
             descendants = make_descendants(generation)
             print(f"Потомки: {descendants}")
-            print(descendants.count(1))
             mutate(descendants, p_mutation)
             sequence = generation + descendants
             print(f"Последовательность родителей и потомков: {sequence}")
@@ -171,12 +173,16 @@ def algorithm(accuracy, first_coeffs, interval, population, p_mutation):
                 suitabilities.append(find_suitability(element, coeffs))
             suitabilities.sort(key=lambda x: x)
             suitabilities = suitabilities[:len(suitabilities) // 3 + len(suitabilities) % 3:]
+            save_generation = generation
             generation = []
             for element in sequence:
                 result = find_suitability(element, coeffs)
                 if result in suitabilities:
-                    generation.append(element)
+                    if element >= interval[0] and element <= interval[1]:
+                        generation.append(element)
                     suitabilities.remove(result)
+            if generation == []:
+                generation = save_generation
             c = dict()
             for element in sequence:
                 c[str(element)] = c.get(str(element), 0) + 1
@@ -222,12 +228,16 @@ def algorithm(accuracy, first_coeffs, interval, population, p_mutation):
                 suitabilities.append(find_suitability(element, coeffs))
             suitabilities.sort(key=lambda x: x)
             suitabilities = suitabilities[:len(suitabilities) // 3 + len(suitabilities) % 3:]
+            save_generation = generation
             generation = []
             for element in sequence:
                 result = find_suitability(element, coeffs)
                 if result in suitabilities:
-                    generation.append(element)
+                    if element >= interval[0] and element <= interval[1]:
+                        generation.append(element)
                     suitabilities.remove(result)
+            if generation == []:
+                generation = save_generation
             c = dict()
             for element in sequence:
                 c[str(element)] = c.get(str(element), 0) + 1
